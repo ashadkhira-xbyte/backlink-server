@@ -1,23 +1,17 @@
-import smtplib
-from email.mime.text import MIMEText
+from flask import Flask, request, Response
 
-TRACK_ID = "user_123"
+app = Flask(__name__)
 
-html = f"""
-<html>
-  <body>
-    <p>Hello, this is a test email</p>
-    <img src="http://192.168.1.249:5000/track?id={TRACK_ID}" width="1" height="1" />
-  </body>
-</html>
-"""
+@app.route("/track")
+def track():
+    track_id = request.args.get("id")
 
-msg = MIMEText(html, "html")
-msg["Subject"] = "Test Email"
-msg["From"] = "ashad.khira@xbyte.io"
-msg["To"] = "ashad.khira.xbyte@gmail.com"
+    print(f"Email opened by: {track_id}")
 
-with smtplib.SMTP("smtp.gmail.com", 587) as server:
-    server.starttls()
-    server.login("ashad.khira@xbyte.io", "pablodbekabhpzyi")
-    server.send_message(msg)
+    # 1x1 transparent pixel
+    pixel = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b'
+
+    return Response(pixel, mimetype='image/gif')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
